@@ -3,7 +3,10 @@ require: rubocop-rspec
 AllCops:
   Exclude:
     - db/schema.rb
+    - db/seeds.rb
     - Gemfile
+    - Rakefile
+    - config/initializers/*.rb
 
 Documentation:
   Enabled: false
