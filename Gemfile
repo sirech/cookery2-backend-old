@@ -9,8 +9,6 @@ gem 'jbuilder', '~> 2.5'
 gem 'mysql2'
 
 group :development, :test do
-  gem 'foreman'
-
   gem 'byebug', platform: :mri
 
   gem 'factory_girl_rails', require: false
