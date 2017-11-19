@@ -1,12 +1,32 @@
-language: node_js
-node_js:
-  - 8
-before_install: cd client
-cache:
-  yarn: true
-  directories:
-    - node_modules
-script:
-  - npm run build
-  - npm test -- --coverage
-  - cat coverage/lcov.info | node_modules/.bin/coveralls
+sudo: required
+services:
+- docker
+language: ruby
+bundler_args: "--without production"
+cache: bundler
+stages:
+- lint
+- test
+- name: docker
+  if: branch = master
+jobs:
+  include:
+  - stage: lint
+    script: bundle exec rubocop -c .rubocop.yml
+  - stage: test
+    before_script: RAILS_ENV=test bundle exec rails db:create
+    script: bundle exec rake spec
+  - stage: docker
+    script:
+    - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD $DOCKER_REGISTRY
+    - docker build . --tag $DOCKER_REGISTRY/$REPO
+    - docker push $DOCKER_REGISTRY/$REPO
+env:
+  global:
+  - secure: W8CeokAM4SFKwz2n6POzjVUOaQtKu0XGOpsQGfcz5Rz+sLmrDfxrysgreN1Pu3+d3xoClnPmc2kAKGPsAijbHs1+fxH+7oX230AeC693ihrUo9nwMctD9/UvVaaJqgfh3Ogp+HTnT1uczE1XvnqbAwz6hzLBytNiI4GTAhj49WqchC23sEbaTx8zOziaNCEIlPqWy5exmcVE6BqzmXRbKK+jOZDS3qIE/CSuijmh/K3g5l2DLt09Ae7A5FC+xi5iD5OtHshS+FMrzAE2RcX20ogecNMqSym6/iBQuUclMlGmpEo1yac7AtkdPA58lgJkGEUhnXNfqhSvOb5QVv9f2gmI8EYokdDsKVaaDQ65wW/OkH+kcx7WnE0V5xnonjNo3EefqwOQHr4VaekXj8pLHMjx+vtFzRtQ864c5zgYJ7uYbfRU+spzdHfArGK3sEIjO9RQ+1rhoyvkV7N9ojC06XeCTK9Bh1C3n0ArmA7RMe9iNsDr+paYNGKw6wUnMkdkWdXf77CS02LfP7lghNpes8ScY65nRHWkCRh88GRhQXgDqpE3GEK+Zk0RjzB1mYmTxNgK8eJOvbJbsR+rV1AIma2cMBiw1AQMOsUGXgpZ1osB1Ek7PVKGI1V5yHSf0/NFeIYgTTXQ/FR9T3XIJ+dujbjXY7u5JrkndJS3jf+UaN4=
+  - secure: Ih+7XyIG3UtRve48J6n0RINwiC+xPLjNlRyvY/9WXW3kox4d2n4WsGYESYSIquRc232zR5ZOo5ub3p8UhAc/xTUY/+62iJB2jHp/0nMzm3B2hDIOSk3NyK6dsAEHXhJGa/ZTJhLLiy2l83OYJ7FOl7zS8PigXgFfqhvA3l/QewBINumfMUDiAXnKzHdOsTgwpZurGVWfibB9Igx+AlM9xsaT+y8+XRjv5qOjLplAp6CiRbFUXkv8xcSVYKpd5BhXHi2izFdf2EYW2aHKjD7Ex8NYFEqFcvUpdmS27N9Ic5kDDJwm0CcxjMj+kVZ2U6aCwyJh/R+GdUTGU7HNRpWlHWb/TLNSrm2fGZ1S2XHj9mk3x9cuZ0dHPN7uXv/G01F7aCD1J5iDhY/6cUnPDUxGUM6Y7iGAEHH1DeMq97ynfYKSuz+jOLFCEv+3+t/aqFVvZa1BovwVC3PMpaVGapUVFxcvvF4G07Me4Xmn8sXh7gnmKSvOMyDScKMemwnA4HRdWuBSMny4j2MfeiiAX4Kn1ug6np5mQGYLm3mmV2EgQJxD5wCG/IoLkuLN3f+NLfDbts1FS/gmL00XFzxsBmWsEoaREK6nqZA++rm29CREwG2odWbI0B3dWohp9IbeoNXVnC0kmkInVsmLNu0zxTnHvZsB/7YxINWikp9VK4iyEgk=
+  - secure: uClkYvhiwrx/D3/W7xV2SFG0x+3aw0EsaO17E2DFRNCvnMZfM6hTfCFTJA4HtIza09hez7LYEfcRJRBTKumbX0NH6UrkqN0h6aawOLIruEEt6hBJ1q1a0t2AEqebRYRdEVTgHHu7Ae72KjpuaJc5sO5y3DdxdvdNw6rlR5OJNHdrXa7chT86Aa4CnvnHItVZexgmmr+OiZeSgqOnJm7kGQnw9cTw60ysF5UI2JsymJ1jZuCrLL03EzejymSFpG9B2Pk2ldlJZS0Hps89t6X2NU52GJV+mB/F95R15tPmp0w3A+id0dbZuNz58luPDSwWV7yjwp84ZKWhpuon469YHiCR0/9HKTCNrWNdw9zWwvr51FoEPP5g2Qb4augoX8SGt+J2eOIrFNHQB2wZurf1xDehvmbY0ncsd9rR6MGEI3BtUIH9b6zCqn0Ln39EsRMoyHbR09SRA94IeLQTvDZ51hKfv2rC6En/cHQBQXVTRSXSiuSblF6K2QH4RvdOCgUJKaoPS3HygwmWcC3qaLN5EOZm+ki9W3QW/GwtnYf5IYO6+2BN2XjSIWVq5qizCcbP4O/oaGAQQS/j9+BS2TTRuU5DpUEj9zrlQY2LHQJW8EY/EoIXplyFVBErvWIpn27/q3XNBA4zmOq+UN9J0qdi0a0NQ2GQpILUjDjlk6yEabA=
+  - secure: yFgDuEm5JhNMhh4WV+wIF8Z/d/4o8/5QKS95SUchSj2LsIKLcxJ4EwIuxZgdn3VRVuyb+/JGa0RKy1bztmTYaLMXaMeZhgaM2Fk5fbkyP9PWd+jRBfvlYDlq7i1r+JLlPvJYNKJFZgh4Isuht//c9WPLPyDDXlDw/eRiJP8C2zdTFUPy59ws+1nzVdjGmpPbbHDAG/FQJ+9gzAjZ/HxWA5RRV5bKNi4UzIBIpdOrVKAqO59g0OazKv52kgHsVPtI7IAmzbSKars8goW+9gVxTtLv0bGLSNjTmqI8ZQBfwtBSEJi0gARMz7W9PBojdVk31Y0iq4bXkJvOcwzbVeDW4yOxvRs2nzv3fk+YrHYQZV3m50sEcxxsCkKFKsEAlW6YMbZXaOr29c48QLF9Y5RfTevNaDV48oYbfUu+jLqpO7iQXpU3o8sWjYQAT1vZmIs9T+yabBksIFSQYuNZt4ITljp9W5f/7KRxUVf68rTmRafKZ2FygLpg1O/IeVB2DSROC0H4Sjb9PAcsA/7cAoFtKu2G57JsMu8Ts1VaorM1iJnGP+VVvaJ2y9pxRfobI8/xIR5ELTKWzGY8+oTs8Mo1z/1AprZO+vgQXAz5t/ivE8SlF15W+nGCj2MN5m7plbcdJnsLX3h6QHspKpYu0JVQbYyK/k/e15R+NGEuu9KUb+0=
+addons:
+  ssh_known_hosts:
+    secure: mxcnDP7GIPLwGGF6fCqfT6Az/YsRGLpCyktL+5XamR9yL+sqRH+IAyPuHMpeqOY0q8lJKneVBZPJh6G79cFYAhHlmOzK+Wif9S13waAcWua3KnXeLz8m6heJ8eAGI7xjOClON8kulNVA5vfq74Fcqr6h/1PRc6UsyXb2WFkalqruNVg9SBeAHlbQifVpNlUd9X/V+pyHMCOpbOpvC5mP7RFBG/p8ToinM0xfLQXHPwo38D9YNyKpZIKbjUcqpW0SSVrO/90xGRX62Wu352xGiWk66Fo1mSVvUYUKLyMWjZ7ToVnUmZMLxAF0QVHSEx+LlGmjYBaJJU6F9laHUrBcGv2WN+GTz+dQCcJPjpC1wFXzyn0qjdCfoojEP0tRPP9yMgZYCC+N77D1gb34HSTyMSZTGq195QbWa7yIPNdDU+GceotFNlOukmzU8PI6/FBSSfrgvq64wHlOYWcIfMElSgYZvoFcYxe3xnt9hq1NIJ/uzwswudHZBaAzUSXp5pyRaRuRyBmbiWmNw1ticBdTsLZRN8tPdZhrViTN5TmJ4siAT0SJ1Vl05+7AkaPpBO6S929C+VnwSDB8wAl4T+m7TDfFhst3BsQ8bFxScUPHvENIVLrWGIghsnmXdVn6EUeW0ib6bls51T2Y5ff1OPtChyTDo5zVo2EtQbFZ1I5Zkbc=
