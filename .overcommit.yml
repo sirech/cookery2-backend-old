@@ -2,6 +2,9 @@ PreCommit:
   HardTabs:
     enabled: true
 
+  BundleCheck:
+    enabled: true
+
   RailsSchemaUpToDate:
     enabled: true
 
