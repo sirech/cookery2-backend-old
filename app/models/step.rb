@@ -1,6 +1,6 @@
 class Step < ApplicationRecord
   validates :description, presence: true
-  validates_numericality_of :duration, greater_than: 0
+  validates_numericality_of :duration, greater_than_or_equal_to: 0
 
   belongs_to :recipe
   belongs_to :related, class_name: 'Recipe', optional: true
