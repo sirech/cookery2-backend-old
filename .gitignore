@@ -20,4 +20,6 @@
 # Ignore coverage folder
 coverage/
 
+reports/
+
 .byebug_history

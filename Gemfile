@@ -34,4 +34,5 @@ end
 group :test do
   gem 'database_cleaner', require: false
   gem 'rspec-rails'
+  gem 'pact'
 end

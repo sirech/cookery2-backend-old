@@ -7,6 +7,7 @@ cache: bundler
 stages:
 - lint
 - test
+- pact
 - name: docker
   if: branch = master
 jobs:
@@ -16,6 +17,9 @@ jobs:
   - stage: test
     before_script: RAILS_ENV=test bundle exec rails db:create
     script: bundle exec rake spec
+  - stage: pact
+    before_script: RAILS_ENV=test bundle exec rails db:create
+    script: RAILS_ENV=test bundle exec rake pact:verify
   - stage: docker
     script:
     - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD $DOCKER_REGISTRY
