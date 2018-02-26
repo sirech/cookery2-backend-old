@@ -1,0 +1,4 @@
+{
+  "modules": ["ccnumber", "contents", "files", "ruby-brakeman", "ruby-bundler-scan"],
+  "failOn": "medium"
+}

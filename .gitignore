@@ -6,6 +6,7 @@
 
 # Ignore bundler config.
 /.bundle
+/vendor/
 
 # Ignore the default SQLite database.
 /db/*.sqlite3
@@ -17,9 +18,11 @@
 !/log/.keep
 !/tmp/.keep
 
-# Ignore coverage folder
-coverage/
-
-reports/
-
 .byebug_history
+
+/coverage
+/reports
+
+# Hawkeye output
+output.json
+summary.json
