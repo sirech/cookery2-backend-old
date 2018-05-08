@@ -98,7 +98,7 @@ GEM
     overcommit (0.45.0)
       childprocess (~> 0.6, >= 0.6.3)
       iniparse (~> 1.4)
-    pact (1.24.0)
+    pact (1.26.0)
       json (> 1.8.5)
       pact-mock_service (~> 2.0)
       pact-support (~> 1.4)
@@ -108,7 +108,7 @@ GEM
       term-ansicolor (~> 1.0)
       thor
       webrick
-    pact-mock_service (2.6.4)
+    pact-mock_service (2.7.0)
       filelock (~> 1.1)
       find_a_port (~> 1.0.1)
       json
@@ -136,7 +136,7 @@ GEM
     pry-rails (0.3.6)
       pry (>= 0.10.4)
     puma (3.11.4)
-    rack (2.0.4)
+    rack (2.0.5)
     rack-test (0.8.3)
       rack (>= 1.0, < 3)
     rails (5.1.6)
