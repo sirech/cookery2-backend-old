@@ -13,6 +13,7 @@ module Rest
 
       return render status: :unprocessable_entity unless @recipe.valid?
       @recipe.save!
+      render status: 201
     end
 
     private
