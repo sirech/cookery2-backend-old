@@ -34,4 +34,9 @@ Pact.provider_states_for 'React' do
       end
     end
   end
+
+  provider_state 'i am logged in' do
+    set_up do
+    end
+  end
 end
