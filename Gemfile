@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'rails', '~> 5.1.1'
+gem 'rails', '~> 5.2.2'
 
 # Use Puma as the app server
 gem 'puma', '~> 3.7'
